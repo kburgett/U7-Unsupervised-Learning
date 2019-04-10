@@ -71,7 +71,46 @@ def main():
     # 3. starter code for apriori
     # 4. full implementation of apriori (PA8 :) last one)
 
+    # Rule 1: interviewed_well=False => tweets=no
+    # Rule 2: phd=no AND tweets=yes => interviewed_well=True
+    # how to represent rules in Python?
+    rule1 = {"lhs": ["interviewed_well=False"], "rhs": ["tweets=no"]}
+    rule2 = {"lhs": ["phd=no", "tweets=yes"], "rhs": ["interviewed_well=True"]}
+    # task: what are the confidence, support, and completeness measures
+    # for these two rules? desk check then code it up!
+    # Nleft, Nright, Nboth, Ntotal, confidence, support, completeness
+    # rule1 desk check: 5, 7, 4, 14, 4/5, 4/14, 4/7
+    # rule2 desck check: 4, 9, 4, 14, 4/4, 4/14, 4/9
+    for rule in [rule1, rule2]:
+        compute_rule_interestingness(rule, table)
+        print(rule)
+    
 
+def compute_rule_interestingness(rule, table):
+    compute_rule_counts(rule, table)
+    rule["confidence"] = rule["Nboth"] / rule["Nleft"]
+    rule["support"] = rule["Nboth"] / rule["Ntotal"]
+    rule["completeness"] = rule["Nboth"] / rule["Nright"]
+
+def compute_rule_counts(rule, table):
+    Nleft = Nright = Nboth = 0
+    Ntotal = len(table)
+
+    for row in table:
+        Nleft += check_row_match(row, rule["lhs"])
+        Nright += check_row_match(row, rule["rhs"])
+        Nboth += check_row_match(row, rule["lhs"] + rule["rhs"])
+
+    rule["Nleft"] = Nleft
+    rule["Nright"] = Nright
+    rule["Nboth"] = Nboth
+    rule["Ntotal"] = Ntotal
+
+def check_row_match(row, terms):
+    for term in terms:
+        if term not in row:
+            return 0
+    return 1
 
 def prepend_attribute_labels(table, header):
     for row in table:
