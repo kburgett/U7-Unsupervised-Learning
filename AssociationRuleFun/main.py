@@ -97,16 +97,16 @@ def compute_rule_counts(rule, table):
     Ntotal = len(table)
 
     for row in table:
-        Nleft += check_row_match(row, rule["lhs"])
-        Nright += check_row_match(row, rule["rhs"])
-        Nboth += check_row_match(row, rule["lhs"] + rule["rhs"])
+        Nleft += check_row_match(rule["lhs"], row)
+        Nright += check_row_match(rule["rhs"], row)
+        Nboth += check_row_match(rule["lhs"] + rule["rhs"], row)
 
     rule["Nleft"] = Nleft
     rule["Nright"] = Nright
     rule["Nboth"] = Nboth
     rule["Ntotal"] = Ntotal
 
-def check_row_match(row, terms):
+def check_row_match(terms, row):
     for term in terms:
         if term not in row:
             return 0
