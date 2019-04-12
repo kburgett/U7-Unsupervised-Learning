@@ -84,6 +84,53 @@ def main():
     for rule in [rule1, rule2]:
         compute_rule_interestingness(rule, table)
         print(rule)
+
+    # set theory basics
+    # set: an unordered list with no duplicates
+    # python has a set type
+    # for example
+    transaction = ["eggs", "milk", "milk", "sugar"]
+    transaction_set = set(transaction)
+    print(transaction_set)
+    # note: order was lost, but we could just use a list
+    # with no duplicates as a set
+    transaction = list(transaction_set)
+    print(transaction)
+    # A union B: set of all items in A or B or both
+    # A intersect B: set of all items in both A and B
+    # can use set methods union() and intersection()
+    # we need union for apriori
+    # lets say we have an LHS set and and RHS set
+    # LHS intersect RHS should be 0
+    # LHS union RHS is sorted(LHS + RHS)
+    # A is a subset of B: if all elements in A are also in B
+    # check_row_match(A, B) will return 1 if A is a subset of B, 0 otherwise
+    # powerset of A: the set of all possible subsets of A, including 0 and A
+    import itertools
+    powerset = []
+    for i in range(0, len(transaction) + 1):
+        # i represnets the size of our subsets
+        subsets = list(itertools.combinations(transaction, i))
+        powerset.extend([s for s in subsets])
+    print(powerset)
+
+    # intro to market basket analysis (MBA)
+    # find associations between products customers buys
+    # IF {"milk=true", "sugar=true"} THEN {"eggs=true"}
+    # we are only interested in products purchased, not products not purchased
+    # e.g. =true not the =false
+    # for shorthand we can drop the =true
+    # IF {"milk", "sugar"} THEN {"eggs"}
+    # {"milk", "sugar"} -> {"eggs"}
+    # terminology
+    # each row in our dataset is now called a "transaction"
+    # a transaction is an "itemset" 
+
+def check_row_match(terms, row):
+    for term in terms:
+        if term not in row:
+            return 0
+    return 1
     
 
 def compute_rule_interestingness(rule, table):
@@ -106,11 +153,7 @@ def compute_rule_counts(rule, table):
     rule["Nboth"] = Nboth
     rule["Ntotal"] = Ntotal
 
-def check_row_match(terms, row):
-    for term in terms:
-        if term not in row:
-            return 0
-    return 1
+
 
 def prepend_attribute_labels(table, header):
     for row in table:
