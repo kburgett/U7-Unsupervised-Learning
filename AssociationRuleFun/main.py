@@ -126,6 +126,63 @@ def main():
     # each row in our dataset is now called a "transaction"
     # a transaction is an "itemset" 
 
+    transactions = [
+        ["b", "c", "m"],
+        ["b", "c", "e", "m", "s"],
+        ["b"],
+        ["c", "e", "s"],
+        ["c"],
+        ["b", "c", "s"],
+        ["c", "e", "s"],
+        ["c", "e"]
+    ]
+    I = compute_unique_values(table)
+    print(I)
+    I = compute_unique_values(transactions)
+    print(I)
+
+    subsets = compute_k_1_subsets(transactions[3])
+    print(subsets)
+
+    rules = apriori(transactions, 0.25, 0.8)
+    print(rules)
+
+def apriori(table, minsup, minconf):
+    supported_itemsets = []
+    # implement apriori here
+    # call your compute_unique_values() to get I
+    # create L1, the list of singletons for each item in I
+    k = 2
+    # implement the while loop
+    # remember: 1 task = 1 algorithm = 1 function
+    # have fun :) last PA!!
+
+    rules = generate_apriori_rules(table, supported_itemsets, minconf)
+    return rules
+
+def generate_apriori_rules(table, supported_itemsets, minconf):
+    rules = []
+    # for each itemset S in supported_itemsets
+    # start with 1-item RHS, move on to 2-item RHS, etc.
+    # for each rule, the remanining items not in RHS become LHS
+    # LHS -> RHS
+
+    return rules
+
+def compute_k_1_subsets(itemset):
+    subsets = []
+    for i in range(len(itemset)):
+        subsets.append(itemset[:i] + itemset[i + 1:])
+    return subsets
+
+def compute_unique_values(table):
+    unique_values = set()
+    for row in table:
+        for value in row:
+            unique_values.add(value)
+
+    return sorted(list(unique_values))
+
 def check_row_match(terms, row):
     for term in terms:
         if term not in row:
