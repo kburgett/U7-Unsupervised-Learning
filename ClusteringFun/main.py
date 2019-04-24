@@ -53,6 +53,7 @@ def main():
     stats_df = df.describe()
     print(stats_df)
     # task: print out max weight (68)
+    print(stats_df.loc["max", "weight(kg)"]) 
 
 if __name__ == "__main__":
     main()
