@@ -64,6 +64,10 @@ def main():
 
     k = 2
     clusters = perform_k_means_clustering(df, k)
+    for cluster_num, cluster_df in clusters:
+        print(cluster_num)
+        print(cluster_df)
+        print("\n")
 
 def perform_k_means_clustering(df, k):
     # 1. pick a value of k
@@ -84,14 +88,39 @@ def perform_k_means_clustering(df, k):
     # task: calculate the centroids
     centroids = compute_centroids(df, k)
 
-    # 3. assign each instance to its "nearest" cluster
-    # for each instance in df
-    for index in df.index:
-        instance = df.loc[index, :]
-        nearest_centroid_index = find_nearest_centroid(instance, centroids)
+    moved = True
+    while moved:
+        # 3. assign each instance to its "nearest" cluster
+        # for each instance in df
+        for index in df.index:
+            instance = df.loc[index, :]
+            nearest_centroid = find_nearest_centroid(instance, centroids)
+            # task: update df
+            df.loc[index, "cluster"] = nearest_centroid
 
-    # 4. re-calculate the centroids
-    # 5. repeat steps 3 and 4 until the centroids no longer "move"
+        #print(df)
+        # 4. re-calculate the centroids
+        old_centroids = centroids
+        centroids = compute_centroids(df, k)
+
+        # 5. repeat steps 3 and 4 until the centroids no longer "move"
+        moved = check_clusters_moved(old_centroids, centroids)
+        print("moved:", moved)
+
+    # return a list of the clusters
+    groupby_object = df.groupby("cluster")
+    return list(groupby_object)
+
+def check_clusters_moved(old_centroids, centroids):
+# these two params are parallel lists
+    # for each index i
+    # compare the series in old_centroids and centroids at i
+    # if they are the same, keep checking
+    # if they are different, we know the centroids moved
+    for i in range(len(centroids)):
+        if not old_centroids[i].equals(centroids[i]):
+            return True
+    return False
 
 def find_nearest_centroid(instance, centroids):
     dists = []
@@ -110,7 +139,7 @@ def compute_centroids(df, k):
         # boolean indexing
         #print(df["cluster"] == i)
         cluster = df[df["cluster"] == i]
-        print(cluster)
+        #print(cluster)
         centroids.append(cluster.iloc[:,:-1].mean())
     #print(centroids)
 
